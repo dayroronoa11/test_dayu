@@ -1,0 +1,51 @@
+#import required libraries
+
+import os
+from apikey import OPENAI_API_KEY
+
+import streamlit as st
+import pandas as pd
+
+from langchain.llms import OpenAI
+from langchain_experimental.agents import create_pandas_dataframe_agent
+from dotenv import load_dotenv, find_dotenv
+
+os.environ['OPENAI_API_KEY'] = OPENAI_API_KEY
+load_dotenv(find_dotenv())
+
+#llm model
+llm = OpenAI(temperature=0)
+
+#Main
+
+st.title("🤖Kognisi Assistant for Data")
+st.write("Hello!👋🏻 I am your AI Assistant and I am here to help you with data project")
+
+with st.sidebar :
+    st.write("Your data analysis start with CSV File")
+
+st.divider()
+
+# Initialise a session state variable
+if 'clicked' not in st.session_state:
+    st.session_state.clicked = {1: False}
+
+# Function to update the value in session state
+def clicked(button):
+    st.session_state.clicked[button] = True
+
+# Button with callback function
+if st.button("Let's get started", on_click=clicked, args=[1]):
+    st.subheader ("Exploratory Data Analysis Part")
+
+    user_csv = st.file_uploader("Upload your file here!", type="csv")
+
+    if user_csv is not None:
+        user_csv.seek(0)
+        df = pd.read_csv(user_csv, low_memory=False)
+    
+with st.sidebar :
+    with st.expander("What are the steps of EDA"):
+        st.write(llm('What are the steps of EDA'))
+
+
